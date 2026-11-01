@@ -1,0 +1,17 @@
+import socket
+import struct
+
+s = socket.socket(socket.AF_PACKET, socket.SOCK_RAW, socket.ntohs(3))
+
+print("Packet Sniffer Started...")
+
+while True:
+    packet, addr = s.recvfrom(65535)
+
+    eth_header = packet[:14]
+    eth = struct.unpack("!6s6sH", eth_header)
+
+    print("\nSource MAC:", ":".join(f"{b:02x}" for b in eth[1]))
+    print("Destination MAC:", ":".join(f"{b:02x}" for b in eth[0]))
+    print("Protocol:", hex(eth[2]))
+    print("Packet Length:", len(packet))
